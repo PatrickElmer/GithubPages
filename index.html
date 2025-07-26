@@ -6,40 +6,16 @@
     <title>Github Pages</title>
 </head>
 <body>
-    <label for="gh_owner">Owner:</label>
-    <input type="text" name="gh_owner">
-    <br>
-    <label for="gh_repo">Repo:</label>
-    <input type="text" name="gh_repo">
-    <br>
-    <label for="gh_token">Token:</label>
-    <input type="text" name="gh_token">
-    <br>
+    <button onclick="_open()">Open</button>
+    <button onclick="_save()">Save</button>
+    <button onclick="_logout()">Logout</button>
+    <hr>
     <label for="gh_path">Filepath:</label>
     <input type="text" name="gh_path">
-    <br>
-    <button onclick="_request()">Fetch</button>
-    <br>
-    <label for="contents"></label>
-    <textarea name="contents"></textarea>
-    <script>
-        async function _request(path = null, method = "GET", body = null) {
-            const url = `https://api.github.com/repos/${document.querySelector("input[name='gh_owner']").value}/${document.querySelector("input[name='gh_repo']").value}/contents/`
-
-            const options = {
-                method: method,
-                headers: {
-                    'Authorization': `token ${document.querySelector("input[name='gh_token']").value}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-            }
-            const result = await fetch(url + document.querySelector("input[name='gh_path']").value, options)
-            if (result.ok) {
-                const data = await result.json()
-                document.querySelector("textarea[name='contents']").value = atob(data.content)
-            }
-    }
-    </script>
+    <hr>
+    <label for="content"></label>
+    <textarea name="content"></textarea>
+    <script src="github.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
