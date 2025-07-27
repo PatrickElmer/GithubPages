@@ -10,20 +10,17 @@ const api = new GithubAPI(
     repo=localStorage.getItem("gh_repo"),
     token=localStorage.getItem("gh_token"),
 )
-const path = document.querySelector("input[name='gh_path']")
-const contents = document.querySelector("textarea[name='content']")
-async function _open() {
-    contents.value = await api.open(path.value)
-}
-async function _save() {
-    await api.save(path.value, contents.value)
-}
 async function _init() {
-    const files = await api.filelist()
+    const data = await api.request("")
+    const files = data
+        .filter(item => item.type === "file" && item.path.endsWith(".html"))
+        .map(item => item.path.slice(0, -5))
+    document.body.innerHTML = ""
     for (const file of files) {
-        const p = document.createElement("p")
-        p.textContent = file
-        document.body.appendChild(p)
+        const a = document.createElement("a")
+        a.textContent = file
+        a.href = `#${file}`
+        document.body.appendChild(a)
     }
 }
 function _logout() {
@@ -32,6 +29,3 @@ function _logout() {
     }
     location.reload()
 }
-addEventListener("DOMContentLoaded", (event) => {
-    _init()
-})
