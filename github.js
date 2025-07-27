@@ -47,10 +47,4 @@ class GithubAPI {
             sha: this.sha,
         })
     }
-    async filelist(path="") {
-        const data = await this.request(path)
-        return data
-            .filter(item => item.type === "file")
-            .map(item => item.path)
-    }
 }
