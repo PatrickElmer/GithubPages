@@ -14,20 +14,25 @@ const filelist = {files: null}
 async function _init() {
     const data = await api.request("")
     const files = data
-        .filter(item => item.type === "file" && item.path.endsWith(".html"))
-        .map(item => item.path.slice(0, -5))
+        .filter(item => item.type === "file" && item.path.endsWith(".md"))
+        .map(item => item.path.slice(0, -3))
     filelist.files = files
     _render_filelist(files)
 }
 function _render_filelist(files) {
     const element = document.getElementById('rute') || document.body
     element.innerHTML = ""
+    const ul = document.createElement("ul")
+    ul.style.textTransform = "capitalize"
     for (const file of files) {
+        const li = document.createElement("li")
         const a = document.createElement("a")
-        a.textContent = file
+        a.textContent = file.replace("-", " ")
         a.href = `#${file}`
-        element.appendChild(a)
+        li.appendChild(a)
+        ul.appendChild(li)
     }
+    element.appendChild(ul)
 }
 function _logout() {
     for (const key of ["gh_owner", "gh_repo", "gh_token"]) {
