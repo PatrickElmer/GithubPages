@@ -22,13 +22,13 @@ class GithubAPI {
     async create(path, content) {
         await this.request(path, "PUT", {
             message: "Create '{}'",
-            content: btoa(content)
+            content: Base64.encode(content)
         })
     }
     async open(path) {
         const data = await this.request(path)
         this.sha = {path: path, value: data.sha}
-        return atob(data.content)
+        return Base64.decode(data.content)
     }
     async save(path, content) {
         if (path !== this.sha.path) {
@@ -37,7 +37,7 @@ class GithubAPI {
         }
         await this.request(path, "PUT", {
             message: "Update '{}'",
-            content: btoa(content),
+            content: Base64.encode(content),
             sha: this.sha.value,
         })
     }
