@@ -10,17 +10,23 @@ const api = new GithubAPI(
     repo=localStorage.getItem("gh_repo"),
     token=localStorage.getItem("gh_token"),
 )
+const filelist = {files: null}
 async function _init() {
     const data = await api.request("")
     const files = data
         .filter(item => item.type === "file" && item.path.endsWith(".html"))
         .map(item => item.path.slice(0, -5))
-    document.body.innerHTML = ""
+    filelist.files = files
+    _render_filelist(files)
+}
+function _render_filelist(files) {
+    const element = document.getElementById('rute') || document.body
+    element.innerHTML = ""
     for (const file of files) {
         const a = document.createElement("a")
         a.textContent = file
         a.href = `#${file}`
-        document.body.appendChild(a)
+        element.appendChild(a)
     }
 }
 function _logout() {
@@ -29,3 +35,8 @@ function _logout() {
     }
     location.reload()
 }
+const search = document.querySelector("input[name='search'")
+search.addEventListener("keyup", () => {
+    const result = filelist.files.filter(filename => filename.includes(search.value))
+    _render_filelist(result)
+})
