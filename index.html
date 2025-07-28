@@ -4,8 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Github Pages</title>
+    <link rel="stylesheet" href="pico.classless.css">
 </head>
 <body>
+    <header>
+        <nav>
+            <input type="search" name="search">
+            <ul>
+                <li><a href="#">Übersicht</a></li>
+                <li><a onclick="_logout()">Ausloggen</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main id="rute"></main>
     <script src="github.js"></script>
     <script src="main.js"></script>
     <script src="rute.js"></script>
