@@ -19,9 +19,26 @@ async function _init() {
     filelist.files = files
     _render_filelist(files)
 }
+function _render_filtered_filelist() {
+    const search = document.querySelector("input[name='search']")
+    _render_filelist(filelist.files.filter(filename => filename.includes(search.value.toLowerCase())))
+}
 function _render_filelist(files) {
     const element = document.getElementById('rute') || document.body
     element.innerHTML = ""
+    if (!document.querySelector("header")) {
+        const header = document.createElement("header")
+        const nav = document.createElement("nav")
+        const input = document.createElement("input")
+        input.type = "search"
+        input.name = "search"
+        input.onkeyup = function() {
+            _render_filtered_filelist()
+        }
+        nav.appendChild(input)
+        header.appendChild(nav)
+        element.parentElement.prepend(header)
+    }
     const ul = document.createElement("ul")
     ul.style.textTransform = "capitalize"
     for (const file of files) {
@@ -40,8 +57,3 @@ function _logout() {
     }
     location.reload()
 }
-const search = document.querySelector("input[name='search'")
-search.addEventListener("keyup", () => {
-    const result = filelist.files.filter(filename => filename.includes(search.value))
-    _render_filelist(result)
-})
