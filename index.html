@@ -7,19 +7,6 @@
     <link rel="stylesheet" href="pico.classless.css">
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="#">Zurück</a></li>
-            </ul>
-            <ul>
-                <li><a onclick="_logout()">Ausloggen</a></li>
-            </ul>
-        </nav>
-        <nav>
-            <input type="search" name="search">
-        </nav>
-    </header>
     <main id="rute" ext="md"></main>
     <script src="base64.min.js"></script>
     <script src="github.js"></script>
@@ -27,8 +14,28 @@
     <script src="drawdown.js"></script>
     <script src="rute.js"></script>
     <script>
+        rute.removeHeader = function(content, data) {
+            const header = document.querySelector("header")
+            if (header) {
+                header.remove()
+            }
+            return content
+        }
         rute.toMarkdown = function(content, data) {
             return markdown(content)
+        }
+        rute.addHeader = function(content, data) {
+        return `<header>
+    <nav>
+        <ul>
+            <li><a href="#">Zurück</a></li>
+        </ul>
+        <ul>
+            <li><a onclick="_logout()">Ausloggen</a></li>
+        </ul>
+    </nav>
+</header>
+` + content
         }
     </script>
 </body>
