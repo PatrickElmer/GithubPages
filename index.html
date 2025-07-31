@@ -13,16 +13,19 @@
     <script src="main.js"></script>
     <script src="drawdown.js"></script>
     <script src="rute.js"></script>
+    <!-- <script src="turndown.js"></script> -->
+    <script src="showdown.js"></script>
     <script>
+        rute.md2html = function(content, data) {
+            var converter = new showdown.Converter()
+            return `<div id="rute_content" contenteditable>${converter.makeHtml(content)}</div>`
+        }
         rute.removeHeader = function(content, data) {
             const header = document.querySelector("header")
             if (header) {
                 header.remove()
             }
             return content
-        }
-        rute.toMarkdown = function(content, data) {
-            return markdown(content)
         }
         rute.addHeader = function(content, data) {
         return `<header>
