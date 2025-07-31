@@ -57,3 +57,11 @@ function _logout() {
     }
     location.reload()
 }
+function _save() {
+    const html = document.getElementById("rute_content").innerHTML
+    const converter = new showdown.Converter()
+    const content = converter.makeMarkdown(html)
+    const hashParams = getHashParams()
+    const path = `${hashParams.hash}.${_rute.ext}`
+    api.save(path, content)
+}
