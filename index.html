@@ -30,30 +30,79 @@
     <script src="showdown.js"></script>
     <script src="quill_2.0.3.js"></script>
     <script>
-        rute.md2html = function(content, data) {
-            var converter = new showdown.Converter()
-            return `<div id="rute_content" contenteditable>${converter.makeHtml(content)}</div>`
-        }
-        rute.removeHeader = function(content, data) {
-            const header = document.querySelector("header")
-            if (header) {
-                header.remove()
+        const quill = new Quill('#editor', {
+            theme: 'bubble',
+            modules: {toolbar: [{'header': 1}, {'header': 2}, 'bold', 'italic']}
+            // 'underline', 'strike', 'blockquote', 'code-block', 'link', 'image', 'video', 'formula', {'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}, {'script': 'sub'}, {'script': 'super'}, {'indent': '-1'}, {'indent': '+1'}, {'direction': 'rtl'}, 'clean'
+        })
+
+        const gh_token = localStorage.getItem("gh_token") || prompt("gh_token")
+        if (gh_token !== null) localStorage.setItem("gh_token", gh_token)
+        const api = new GithubAPI(
+            owner="PatrickElmer",
+            repo="GithubAPI",
+            token=localStorage.getItem("gh_token"),
+        )
+
+        window.addEventListener('DOMContentLoaded', onRouteChange)
+        window.addEventListener('hashchange', onRouteChange)
+        async function onRouteChange() {
+            const hash = window.location.hash.substring(1).replace(/^\//, '')
+            const ext = "md"
+            if (hash === "") {
+                _init()
+            } else {
+                const content = await api.open(`${hash}.${ext}`)
+                updateContent(content)
             }
-            return content
         }
-        rute.addHeader = function(content, data) {
-        return `<header>
-    <nav>
-        <ul>
-            <li><a href="#">Zurück</a></li>
-        </ul>
-        <ul>
-            <li><a onclick="_save()">Speichern</a></li>
-            <li><a onclick="_logout()">Ausloggen</a></li>
-        </ul>
-    </nav>
-</header>
-` + content
+        function updateContent(content) {
+            var converter = new showdown.Converter()
+            const element = document.querySelector(".ql-editor")
+            element.innerHTML = converter.makeHtml(content)
+            element.scrollTo(0, 0)
+        }
+
+        function _logout() {
+            localStorage.removeItem("gh_token")
+            location.reload()
+        }
+        function _save() {
+            const ext = "md"
+            const html = quill.getSemanticHTML()
+            const converter = new showdown.Converter()
+            const content = converter.makeMarkdown(html)
+                .replaceAll("\n\n\n\n", "\n\n")
+                .replace(/\n+$/, '\n')
+            const hash = window.location.hash.substring(1).replace(/^\//, '')
+            const path = `${hash}.${ext}`
+            api.save(path, content)
+        }
+
+        const filelist = {files: null}
+        async function _init() {
+            const data = await api.request("")
+            const files = data
+                .filter(item => item.type === "file" && item.path.endsWith(".md"))
+                .map(item => item.path.slice(0, -3))
+            filelist.files = files
+            _render_filelist(files)
+        }
+        function _render_filelist(files) {
+            const element = document.querySelector(".ql-editor")
+            element.innerHTML = ""
+            element.style.textTransform = "capitalize"
+            for (const file of files) {
+                const a = document.createElement("a")
+                a.textContent = file.replace("-", " ")
+                a.href = `#${file}`
+                element.appendChild(a)
+            }
+            element.scrollTo(0, 0)
+        }
+        function _render_filtered_filelist() {
+            const search = document.querySelector("input[name='search']")
+            _render_filelist(filelist.files.filter(filename => filename.includes(search.value.toLowerCase())))
         }
     </script>
 </body>
