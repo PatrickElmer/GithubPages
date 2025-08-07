@@ -79,7 +79,9 @@
             localStorage.removeItem("gh_token")
             location.reload()
         }
-        function _save() {
+        async function _save() {
+            const saveButton = document.getElementById("saveButton")
+            saveButton.setAttribute('aria-busy', true)
             const ext = "md"
             const html = quill.getSemanticHTML()
             const converter = new showdown.Converter()
@@ -88,7 +90,8 @@
                 .replace(/\n+$/, '\n')
             const hash = window.location.hash.substring(1).replace(/^\//, '')
             const path = `${hash}.${ext}`
-            api.save(path, content)
+            await api.save(path, content)
+            saveButton.setAttribute('aria-busy', false)
         }
 
         const filelist = {files: null}
