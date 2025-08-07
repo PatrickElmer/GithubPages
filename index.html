@@ -96,6 +96,9 @@
 
         const filelist = {files: null}
         async function _init() {
+            const search = document.querySelector("input[name='search']")
+            search.value = ""
+            search.focus()
             const data = await api.request("")
             const files = data
                 .filter(item => item.type === "file" && item.path.endsWith(".md"))
