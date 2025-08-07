@@ -11,15 +11,22 @@
 <body>
     <main>
         <header>
-            <nav clss="primary-nav">
+            <nav>
                 <input type="search" name="search" onkeyup="_render_filtered_filelist()">
             </nav>
-            <nav class="secondary-nav">
+        </header>
+        <div id="filelist"></div>
+    </main>
+    <main style="display: none;">
+        <header>
+            <nav>
                 <ul>
                     <li><a href="#">Zurück</a></li>
                 </ul>
                 <ul>
-                    <li><a onclick="_save()">Speichern</a></li>
+                    <li><button onclick="_save()" id="saveButton">Speichern</button></li>
+                </ul>
+                <ul>
                     <li><a onclick="_logout()">Ausloggen</a></li>
                 </ul>
             </nav>
@@ -51,10 +58,14 @@
             const hash = window.location.hash.substring(1).replace(/^\//, '')
             const ext = "md"
             if (hash === "") {
+                document.querySelector("#editor").parentElement.style.display = "none"
                 _init()
+                document.querySelector("#filelist").parentElement.style.display = "block"
             } else {
+                document.querySelector("#filelist").parentElement.style.display = "none"
                 const content = await api.open(`${hash}.${ext}`)
                 updateContent(content)
+                document.querySelector("#editor").parentElement.style.display = "block"
             }
         }
         function updateContent(content) {
