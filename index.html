@@ -107,14 +107,16 @@
             _render_filelist(files)
         }
         function _render_filelist(files) {
-            const element = document.querySelector(".ql-editor")
+            const element = document.querySelector("#filelist")
             element.innerHTML = ""
             element.style.textTransform = "capitalize"
             for (const file of files) {
+                const p = document.createElement("p")
                 const a = document.createElement("a")
                 a.textContent = file.replace("-", " ")
                 a.href = `#${file}`
-                element.appendChild(a)
+                p.appendChild(a)
+                element.appendChild(p)
             }
             element.scrollTo(0, 0)
         }
