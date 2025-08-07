@@ -18,6 +18,7 @@ class GithubAPI {
         if (result.ok) {
             return await result.json()
         }
+        return null
     }
     async create(path, content) {
         await this.request(path, "PUT", {
@@ -27,6 +28,7 @@ class GithubAPI {
     }
     async open(path) {
         const data = await this.request(path)
+        if (data == null) return ""
         this.sha = {path: path, value: data.sha}
         return Base64.decode(data.content)
     }
