@@ -6,7 +6,6 @@ class GithubAPI {
             'Content-Type': 'application/json'
         }
         this.url = `https://api.github.com/repos/${owner}/${repo}/contents/`
-        this.sha = {path: null, value: null}
     }
     async request(path, method="GET", body=null) {
         const options = {method: method, headers: this.headers}
@@ -14,10 +13,12 @@ class GithubAPI {
             body.message = body.message.replace("{}", path)
             options.body = JSON.stringify(body)
         }
-        const result = await fetch(this.url + path, options)
-        if (result.ok) {
-            return await result.json()
+        const response = await fetch(this.url + path, options)
+        if (response.ok) {
+            console.debug(method, path, "request successful!")
+            return await response.json()
         }
+        console.warn(method, path, "request failed!", response.status)
         return null
     }
     async create(path, content) {
@@ -29,24 +30,21 @@ class GithubAPI {
     async open(path) {
         const data = await this.request(path)
         if (data == null) return ""
-        this.sha = {path: path, value: data.sha}
         return Base64.decode(data.content)
     }
     async save(path, content) {
-        if (path !== this.sha.path) {
-            const data = await this.request(path)
-            this.sha = {path: path, value: data.sha}
-        }
+        const data = await this.request(path)
         await this.request(path, "PUT", {
             message: "Update '{}'",
             content: Base64.encode(content),
-            sha: this.sha.value,
+            sha: data.sha,
         })
     }
     async remove(path) {
+        const data = await this.request(path)
         await this.request(path, "DELETE", {
             message: "Delete '{}'",
-            sha: this.sha,
+            sha: data.sha,
         })
     }
 }
