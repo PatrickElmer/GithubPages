@@ -71,7 +71,8 @@
         function updateContent(content) {
             var converter = new showdown.Converter()
             const element = document.querySelector(".ql-editor")
-            element.innerHTML = converter.makeHtml(content)
+            const html = converter.makeHtml(content)
+            element.innerHTML = html.replaceAll("&nbsp;", " ")
             element.scrollTo(0, 0)
         }
 
